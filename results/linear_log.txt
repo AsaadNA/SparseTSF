@@ -1,0 +1,27 @@
+linear    H= 96 seed=2023 params= 69216 epochs=17  MSE(paper)=0.3754 MSE(full)=0.3805 MAE(full)=0.4030 (7.8s)
+linear    H= 96 seed=2024 params= 69216 epochs=17  MSE(paper)=0.3723 MSE(full)=0.3779 MAE(full)=0.4010 (3.8s)
+linear    H= 96 seed=2025 params= 69216 epochs=20  MSE(paper)=0.3716 MSE(full)=0.3772 MAE(full)=0.4003 (4.9s)
+linear    H= 96 seed=2026 params= 69216 epochs=19  MSE(paper)=0.3728 MSE(full)=0.3779 MAE(full)=0.4010 (4.5s)
+linear    H= 96 seed=2027 params= 69216 epochs=29  MSE(paper)=0.3700 MSE(full)=0.3755 MAE(full)=0.3987 (6.7s)
+linear    H=192 seed=2023 params=138432 epochs=30  MSE(paper)=0.4090 MSE(full)=0.4124 MAE(full)=0.4208 (8.5s)
+linear    H=192 seed=2024 params=138432 epochs=14  MSE(paper)=0.4157 MSE(full)=0.4195 MAE(full)=0.4271 (3.8s)
+linear    H=192 seed=2025 params=138432 epochs=20  MSE(paper)=0.4103 MSE(full)=0.4137 MAE(full)=0.4224 (5.5s)
+linear    H=192 seed=2026 params=138432 epochs=21  MSE(paper)=0.4107 MSE(full)=0.4140 MAE(full)=0.4224 (6.0s)
+linear    H=192 seed=2027 params=138432 epochs=15  MSE(paper)=0.4152 MSE(full)=0.4187 MAE(full)=0.4273 (4.2s)
+linear    H=336 seed=2023 params=242256 epochs=13  MSE(paper)=0.4329 MSE(full)=0.4581 MAE(full)=0.4517 (4.4s)
+linear    H=336 seed=2024 params=242256 epochs=19  MSE(paper)=0.4207 MSE(full)=0.4453 MAE(full)=0.4418 (6.5s)
+linear    H=336 seed=2025 params=242256 epochs= 9  MSE(paper)=0.4458 MSE(full)=0.4711 MAE(full)=0.4611 (3.2s)
+linear    H=336 seed=2026 params=242256 epochs= 9  MSE(paper)=0.4477 MSE(full)=0.4727 MAE(full)=0.4645 (3.6s)
+linear    H=336 seed=2027 params=242256 epochs=14  MSE(paper)=0.4273 MSE(full)=0.4528 MAE(full)=0.4482 (5.0s)
+linear    H=720 seed=2023 params=519120 epochs=20  MSE(paper)=0.4500 MSE(full)=0.4547 MAE(full)=0.4678 (9.9s)
+linear    H=720 seed=2024 params=519120 epochs=15  MSE(paper)=0.4683 MSE(full)=0.4725 MAE(full)=0.4808 (7.5s)
+linear    H=720 seed=2025 params=519120 epochs=14  MSE(paper)=0.4586 MSE(full)=0.4636 MAE(full)=0.4736 (6.7s)
+linear    H=720 seed=2026 params=519120 epochs=20  MSE(paper)=0.4548 MSE(full)=0.4592 MAE(full)=0.4704 (9.4s)
+linear    H=720 seed=2027 params=519120 epochs=21  MSE(paper)=0.4517 MSE(full)=0.4565 MAE(full)=0.4685 (10.0s)
+
+Summary over 5 seeds (mean ± std)
+H= 96  MSE(paper) 0.372±0.002  MAE(paper) 0.399±0.002  MSE(full) 0.378±0.002  MAE(full) 0.401±0.001
+H=192  MSE(paper) 0.412±0.003  MAE(paper) 0.421±0.003  MSE(full) 0.416±0.003  MAE(full) 0.424±0.003
+H=336  MSE(paper) 0.435±0.010  MAE(paper) 0.445±0.009  MSE(full) 0.460±0.011  MAE(full) 0.453±0.008
+H=720  MSE(paper) 0.457±0.006  MAE(paper) 0.469±0.005  MSE(full) 0.461±0.006  MAE(full) 0.472±0.005
+saved /home/ubuntu/DL-Paper/results/linear_etth1.json

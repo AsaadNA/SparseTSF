@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SparseTSF Interactive Demo</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">SparseTSF <span>interactive demo</span></div>
+    <nav>
+      <a href="#idea">Idea</a>
+      <a href="#explorer">Live forecast</a>
+      <a href="#pipeline">Inside the model</a>
+      <a href="#playground">Hand example</a>
+      <a href="#params">Parameters</a>
+      <a href="#results">Results</a>
+    </nav>
+    <button id="theme" class="ghost" aria-label="Toggle dark mode">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <p class="eyebrow">ICML 2024 · Oral · Lin, Lin, Wu, Chen &amp; Yang</p>
+    <h1>Forecasting long time series with <em>under 1,000 parameters</em></h1>
+    <p class="lead">This page runs a <b>from-scratch SparseTSF</b>, trained on ETTh1, directly in your
+      browser. Pick a test window, step through every stage of the model, and edit the hand-worked
+      example yourself.</p>
+    <div class="stats" id="hero-stats"></div>
+  </section>
+
+  <!-- ============ IDEA ============ -->
+  <section id="idea">
+    <h2>The idea, as a coffee shop</h2>
+    <p class="sub">You want to predict customers every hour for the next 4 days, using the last 30 days of hourly records.</p>
+    <div class="cards">
+      <div class="card"><div class="num">1</div><h3>Remove the average</h3>
+        <p>"We get 50 customers an hour on average." Keep only the ups and downs.</p><code>x − mean(x)</code></div>
+      <div class="card"><div class="num">2</div><h3>Smooth the noise</h3>
+        <p>Blend each hour with its neighbours so one tour bus doesn't mislead you.</p><code>conv1d(x) + x</code></div>
+      <div class="card"><div class="num">3</div><h3>Line up the same hour</h3>
+        <p>Make 24 lists: "every 8 am", "every 9 am", … each holding 30 days.</p><code>720 → 24 × 30</code></div>
+      <div class="card"><div class="num">4</div><h3>One shared rule</h3>
+        <p>Learn <i>one</i> rule for how a list moves from day to day, and use it for all 24 hours.</p><code>Linear 30 → 4</code></div>
+      <div class="card"><div class="num">5</div><h3>Put it back together</h3>
+        <p>Interleave the 24 forecasts back into hourly order and add the average back.</p><code>24 × 4 → 96</code></div>
+    </div>
+  </section>
+
+  <!-- ============ EXPLORER ============ -->
+  <section id="explorer">
+    <h2>Live forecast on the ETTh1 test set</h2>
+    <p class="sub">The trained weights are loaded into a JavaScript copy of the model. Every forecast below is computed in your browser.</p>
+    <div class="controls">
+      <label>Horizon
+        <select id="horizon">
+          <option value="96">96 h (4 days)</option><option value="192">192 h (8 days)</option>
+          <option value="336">336 h (14 days)</option><option value="720">720 h (30 days)</option>
+        </select></label>
+      <label>Channel <select id="channel"></select></label>
+      <label class="grow">Test window <span id="win-label" class="mono"></span>
+        <input type="range" id="window" min="0" value="0"></label>
+      <button id="random" class="ghost">Random</button>
+      <button id="play" class="primary">▶ Play</button>
+      <label class="check"><input type="checkbox" id="fullback"> Show full 720 h look-back</label>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span><i class="sw" style="background:var(--series-1)"></i>Actual</span>
+        <span><i class="sw" style="background:var(--series-2)"></i>SparseTSF forecast</span>
+      </div>
+      <div id="chart-main" class="chart"></div>
+      <div class="metrics" id="metrics"></div>
+    </div>
+    <p class="note" id="verify"></p>
+  </section>
+
+  <!-- ============ PIPELINE ============ -->
+  <section id="pipeline">
+    <h2>Inside the model, step by step</h2>
+    <p class="sub">Every view uses the same window and channel as the live forecast above. Hover over any cell, bar or line to see its value.</p>
+
+    <div class="step">
+      <div class="step-h"><span class="num">1</span><h3>Instance normalisation</h3>
+        <span class="formula">x′ = x − mean(x)</span></div>
+      <p>The mean of this window is <b id="s1-mean"></b>. Subtracting it means the model only learns the
+        <i>shape</i>, which makes it robust to level shifts between training and test.</p>
+      <div id="chart-s1" class="chart small"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="num">2</span><h3>Sliding aggregation</h3>
+        <span class="formula">x″ = conv1d(x′, k) + x′ &nbsp;·&nbsp; k has 2⌊w/2⌋+1 = 25 learned weights</span></div>
+      <div class="two">
+        <div><h4>Learned kernel k</h4><div id="chart-kernel" class="chart small"></div></div>
+        <div><h4>Before (x′) vs after (x″)</h4><div id="chart-s2" class="chart small"></div>
+          <div class="legend small"><span><i class="sw" style="background:var(--series-3)"></i>x′</span>
+            <span><i class="sw" style="background:var(--series-1)"></i>x″ (smoothed + residual)</span></div></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="num">3</span><h3>Downsampling: the key trick</h3>
+        <span class="formula">720 values → 24 phases × 30 periods</span></div>
+      <p>Row = hour of day, column = day. Read across a row and you see <b>one hour's trend over 30 days</b>.
+        The daily cycle shows up as the vertical colour pattern, so the model never has to learn it.</p>
+      <div id="chart-s3" class="chart"></div>
+      <div class="scale"><span>below mean</span><i class="grad"></i><span>above mean</span></div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="num">4</span><h3>One shared linear layer</h3>
+        <span class="formula">y<sub>phase</sub> = W · x″<sub>phase</sub> &nbsp;·&nbsp; W is <span id="s4-shape"></span>, the same for all 24 rows</span></div>
+      <div class="two">
+        <div><h4>Learned weights W (output day × input day)</h4><div id="chart-W" class="chart"></div>
+          <p class="note">The strongest weights are usually on the most recent days, at the right-hand edge.</p></div>
+        <div><h4>Output: 24 phases × <span id="s4-m"></span> future days</h4><div id="chart-s4" class="chart"></div></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="num">5</span><h3>Upsample and de-normalise</h3>
+        <span class="formula">ŷ = interleave(y) + mean(x)</span></div>
+      <p>Each column of the output matrix becomes one future day, which is 24 consecutive hours. Adding the mean
+        back gives the orange forecast in the live chart. Total learnable parameters: <b id="s5-params"></b>.</p>
+    </div>
+  </section>
+
+  <!-- ============ PLAYGROUND ============ -->
+  <section id="playground">
+    <h2>Hand-example playground</h2>
+    <p class="sub">The small numerical example from the report. Change any number and every step updates.</p>
+    <div class="controls">
+      <label class="grow">Input series x (comma-separated)<input id="pg-x" type="text"></label>
+      <label>Period w<select id="pg-w"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+      <label>Future periods m<select id="pg-m"><option>1</option><option selected>2</option><option>3</option></select></label>
+      <label class="grow">Ground truth (optional)<input id="pg-y" type="text"></label>
+    </div>
+    <div class="controls">
+      <button class="ghost" data-preset="report">Report example</button>
+      <button class="ghost" data-preset="nok">Conv off (k = 0)</button>
+      <button class="ghost" data-preset="avg">"Average of recent days" rule</button>
+    </div>
+    <div class="two">
+      <div class="panel"><h4>Conv kernel k</h4><div id="pg-k" class="grid-in"></div>
+        <h4>Shared weights W (m × n)</h4><div id="pg-W" class="grid-in"></div></div>
+      <div class="panel"><div id="pg-steps" class="steps-out"></div></div>
+    </div>
+    <div class="panel"><div class="legend">
+      <span><i class="sw" style="background:var(--series-1)"></i>Input / truth</span>
+      <span><i class="sw" style="background:var(--series-2)"></i>Forecast</span></div>
+      <div id="chart-pg" class="chart small"></div></div>
+  </section>
+
+  <!-- ============ PARAMS ============ -->
+  <section id="params">
+    <h2>Why it's so small</h2>
+    <p class="sub">Paper Theorem 3.1: parameters = (2⌊w/2⌋+1) + ⌊L/w⌋·⌊H/w⌋. Compare a plain Linear model with L·H + H parameters.</p>
+    <div class="controls">
+      <label class="grow">Look-back L <span id="pc-Lv" class="mono"></span><input type="range" id="pc-L" min="96" max="1440" step="24" value="720"></label>
+      <label class="grow">Horizon H <span id="pc-Hv" class="mono"></span><input type="range" id="pc-H" min="24" max="720" step="24" value="720"></label>
+      <label>Period w<select id="pc-w"><option>12</option><option selected>24</option><option>168</option></select></label>
+    </div>
+    <div class="stats" id="pc-out"></div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results">
+    <h2>Reproduction vs. the paper (ETTh1)</h2>
+    <p class="sub">5 seeds (2023–2027), mean ± std, using the paper's protocol: L = 720, w = 24, Adam lr 0.02, batch 256, 30 epochs, early stopping.</p>
+    <div class="panel"><h4>Test MSE: paper Table 2 vs. ours (bars show ± std)</h4>
+      <div class="legend"><span><i class="sw" style="background:var(--series-1)"></i>Paper</span>
+        <span><i class="sw" style="background:var(--series-2)"></i>Ours (from scratch)</span></div>
+      <div id="chart-res" class="chart"></div></div>
+    <div class="panel"><div class="table-wrap"><table id="res-table"></table></div>
+      <p class="note">"Paper protocol" skips the last incomplete test batch, as the original code did.
+        "All windows" evaluates every test window, the authors' later bug fix. Δ is shown in green when it is within ±0.005 of the paper.</p></div>
+    <div class="panel"><h4>Ablation: plain Linear vs. SparseTSF (paper Table 5)</h4>
+      <div class="table-wrap"><table id="abl-table"></table></div>
+      <p class="note">Our Linear baseline only matches the paper at H = 96, because the paper doesn't fully specify how its Linear model was set up. The paper's conclusion, that the Sparse technique helps, still holds at every horizon.</p></div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  Lin et al., <i>SparseTSF: Modeling Long-term Time Series Forecasting with *1k* Parameters</i>, ICML 2024.
+  Re-implementation and demo for a Deep Learning course project.
+</footer>
+
+<script src="data/model_data.js"></script>
+<script src="assets/js/sparsetsf.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

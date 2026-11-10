@@ -1,0 +1,27 @@
+sparsetsf H= 96 seed=2023 params=   145 epochs= 7  MSE(paper)=0.3570 MSE(full)=0.3649 MAE(full)=0.3898 (11.9s)
+sparsetsf H= 96 seed=2024 params=   145 epochs=12  MSE(paper)=0.3546 MSE(full)=0.3627 MAE(full)=0.3885 (15.6s)
+sparsetsf H= 96 seed=2025 params=   145 epochs=12  MSE(paper)=0.3633 MSE(full)=0.3767 MAE(full)=0.4116 (15.4s)
+sparsetsf H= 96 seed=2026 params=   145 epochs=13  MSE(paper)=0.3552 MSE(full)=0.3630 MAE(full)=0.3887 (13.7s)
+sparsetsf H= 96 seed=2027 params=   145 epochs=12  MSE(paper)=0.3540 MSE(full)=0.3622 MAE(full)=0.3882 (13.5s)
+sparsetsf H=192 seed=2023 params=   265 epochs=11  MSE(paper)=0.3949 MSE(full)=0.4013 MAE(full)=0.4110 (13.8s)
+sparsetsf H=192 seed=2024 params=   265 epochs=17  MSE(paper)=0.3958 MSE(full)=0.4017 MAE(full)=0.4110 (19.0s)
+sparsetsf H=192 seed=2025 params=   265 epochs= 8  MSE(paper)=0.3935 MSE(full)=0.4000 MAE(full)=0.4112 (9.5s)
+sparsetsf H=192 seed=2026 params=   265 epochs= 7  MSE(paper)=0.3954 MSE(full)=0.4018 MAE(full)=0.4105 (8.5s)
+sparsetsf H=192 seed=2027 params=   265 epochs=14  MSE(paper)=0.3955 MSE(full)=0.4015 MAE(full)=0.4111 (16.6s)
+sparsetsf H=336 seed=2023 params=   445 epochs= 9  MSE(paper)=0.4001 MSE(full)=0.4279 MAE(full)=0.4276 (11.1s)
+sparsetsf H=336 seed=2024 params=   445 epochs=12  MSE(paper)=0.4003 MSE(full)=0.4275 MAE(full)=0.4254 (14.5s)
+sparsetsf H=336 seed=2025 params=   445 epochs=14  MSE(paper)=0.4016 MSE(full)=0.4299 MAE(full)=0.4266 (16.0s)
+sparsetsf H=336 seed=2026 params=   445 epochs=10  MSE(paper)=0.4021 MSE(full)=0.4314 MAE(full)=0.4269 (11.1s)
+sparsetsf H=336 seed=2027 params=   445 epochs= 7  MSE(paper)=0.4047 MSE(full)=0.4331 MAE(full)=0.4271 (8.0s)
+sparsetsf H=720 seed=2023 params=   925 epochs= 7  MSE(paper)=0.4159 MSE(full)=0.4255 MAE(full)=0.4457 (7.7s)
+sparsetsf H=720 seed=2024 params=   925 epochs=15  MSE(paper)=0.4154 MSE(full)=0.4242 MAE(full)=0.4457 (16.1s)
+sparsetsf H=720 seed=2025 params=   925 epochs=13  MSE(paper)=0.4159 MSE(full)=0.4249 MAE(full)=0.4468 (15.7s)
+sparsetsf H=720 seed=2026 params=   925 epochs= 7  MSE(paper)=0.4202 MSE(full)=0.4289 MAE(full)=0.4469 (9.2s)
+sparsetsf H=720 seed=2027 params=   925 epochs=14  MSE(paper)=0.4173 MSE(full)=0.4260 MAE(full)=0.4477 (18.1s)
+
+Summary over 5 seeds (mean ± std)
+H= 96  MSE(paper) 0.357±0.003  MAE(paper) 0.389±0.008  MSE(full) 0.366±0.005  MAE(full) 0.393±0.009
+H=192  MSE(paper) 0.395±0.001  MAE(paper) 0.406±0.000  MSE(full) 0.401±0.001  MAE(full) 0.411±0.000
+H=336  MSE(paper) 0.402±0.002  MAE(paper) 0.416±0.001  MSE(full) 0.430±0.002  MAE(full) 0.427±0.001
+H=720  MSE(paper) 0.417±0.002  MAE(paper) 0.440±0.001  MSE(full) 0.426±0.002  MAE(full) 0.447±0.001
+saved /home/ubuntu/DL-Paper/results/sparsetsf_etth1.json
